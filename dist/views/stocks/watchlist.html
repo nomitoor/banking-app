@@ -1,0 +1,151 @@
+<section id="actionWrapper" class="mt-3 mb-2">
+  <div class="row">
+    <div class="col-sm-5 mb-2 d-flex">
+      <dd-stocklist dd-model="vm.filter" 
+        type="0" 
+        style="width:280px"
+        dd-change="vm.onChangeList"
+        dd-options="vm.stockListOptions">
+      </dd-stocklist>
+      <button class="btn btn-success ml-2 text-nowrap" ng-click="vm.addWatchlist()">
+        <i class="material-icons">add</i>
+        New
+      </button>
+      <button class="btn btn-info ml-2 text-nowrap" 
+        ng-click="vm.updateWatchlist(vm.filter.stock_list)"
+        ng-disabled="!vm.filter.stock_list">
+        <i class="material-icons">edit</i>
+      </button>
+      <button class="btn btn-danger ml-2 text-nowrap" 
+        ng-click="vm.removeWatchlist(vm.filter.stock_list)"
+        ng-disabled="!vm.filter.stock_list">
+        <i class="material-icons">delete</i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 mb-2 d-flex">
+      <dd-stock dd-model="vm.newStock" class="" style="width:280px" placeholder="Add a stock"></dd-stock>
+      <button class="btn btn-success ml-2 text-nowrap" 
+        ng-click="vm.addStock(vm.newStock)"
+        ng-disabled="!vm.newStock.stock">
+        <i class="material-icons">add</i>
+        Add
+      </button>
+    </div>
+    
+    <div class="col-sm-6 mb-2">
+      <div class="row" ng-init="_filter=''">
+        <form class="col-12" ng-submit="vm.filterWatchlist(_filter)" novalidate>
+          <div class="input-group col-12 col-sm-8 col-md-7 col-lg-5 float-right px-0">
+            <input type="text" class="form-control" placeholder="Filter..." ng-model="_filter">
+            <div class="input-group-append">
+              <button class="btn btn-info" type="submit">
+                <i class="material-icons">filter_list_alt</i>
+              </button>            
+            </div>        
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive vh-180">
+        <table class="table table-bordered table-centered nowrap table-hover">
+          <thead>
+            <tr>
+              <th class="bg-primary text-white">#</th>
+              <th class="bg-primary text-white">
+                <a href="javascript:void(0)" class="text-white text-nowrap" ng-click="vm.reorder('code')">
+                  Stock
+                  <span ng-if="vm.order=='code'">▲</span>
+                  <span ng-if="vm.order=='-code'">▼</span>
+                </a>
+              </th>
+              <th class="bg-primary text-white">
+                <a href="javascript:void(0)" class="text-white text-nowrap" ng-click="vm.reorder('price')">
+                  Price
+                  <span ng-if="vm.order=='price'">▲</span>
+                  <span ng-if="vm.order=='-price'">▼</span>
+                </a>
+              </th>
+              <th class="bg-primary text-white text-nowrap">
+                <a href="javascript:void(0)" class="text-white" ng-click="vm.reorder('price_change')">
+                  Change
+                  <span ng-if="vm.order=='price_change'">▲</span>
+                  <span ng-if="vm.order=='-price_change'">▼</span>
+                </a>
+              </th>
+              <th class="bg-primary text-white">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="chkEdit" ng-model="vm.isEdit">
+                  <label class="form-check-label" for="chkEdit">
+                    Edit
+                  </label>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="stock in vm.stocks" ng-class="{'bg-highlight': stock.new}">
+              <td>{{ (vm.pageSize*(vm.currentPage-1))+$index + 1 }}</td>
+              <td class="text-left">
+                <div class="fs-auto-md">{{ stock.code }}</div>
+                <div class="fs-auto-sm d-sm-block d-none">{{ stock.name }}</div>
+              </td>
+              <td>
+                <div class="text-right fs-auto-md text-bold">
+                  {{ stock.price | number:2 }}
+                </div>
+              </td>
+              <td width="50">
+                <div class="text-white rounded-lg px-2" ng-class="{'bg-danger': stock.price_change<0, 'bg-success': stock.price_change>0, 'bg-yellow text-dark': stock.price_change==0}">
+                  <div class="text-right fs-auto-md">{{ stock.price_change | number:2  }}</div>
+                  <div class="text-right fs-auto-sm">{{ stock.percent_change | stockformat:{unit: '%'}  }}</div>
+                </div>
+              </td>
+              <td width="140">
+                <button ng-if="!vm.isEdit" class="btn btn-warning btn-sm btn-tiny" 
+                  ng-click="vm.syncInfo(stock)"
+                  ng-disabled="stock.syncing"
+                  title="Update new Info">
+                  <i class="material-icons" ng-class="{'spinner': stock.syncing}">sync</i>
+                </button>
+                <button ng-if="vm.isEdit" class="btn btn-danger btn-sm btn-tiny" 
+                  ng-click="vm.deleteStock(stock)"
+                  title="Remove this stock">
+                  <i class="material-icons">delete</i>
+                </button>
+                <div class="dropdown d-inline-block" ng-init="stock.showAction=false">
+                  <button class="btn btn-success btn-sm btn-tiny dropdown-toggle" 
+                    type="button" title="Add to Watchlist or Databank"
+                    ng-click="stock.showAction=!stock.showAction; $event.stopPropagation();">
+                    <i class="material-icons">post_add</i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" ng-class="{'show':stock.showAction}">
+                    <a class="dropdown-item" href="javascript:void(0)" 
+                      ng-click="vm.addToDatabank(stock, $event);">Add to Databank</a>
+                    <a class="dropdown-item" href="javascript:void(0)"
+                    ng-click="vm.addToScreener(stock, $event);">Add to Screener</a>
+                    <!-- <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:void(0)"
+                    ng-click="vm.buy(stock, $event);">Buy this stock</a> -->
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning" ng-if="!vm.stocks.length">
+          There is no stock for this list. Click (+ Add) button to add one.
+        </div>
+      </div>
+      <paging ng-if="vm.total>vm.pageSize" total="vm.total" current-page="vm.currentPage" page-size="vm.pageSize" callback="vm.pagingCallback"></paging>
+    </div>
+  </div>
+  <stocklist-modal show="vm.showAddWatchlistModal" type="Watchlist" 
+    action='vm.watchlistModalAction' data="vm.currentStockList"
+    on-success="vm.onNewWatchlist">
+  </stocklist-modal>
+</section>

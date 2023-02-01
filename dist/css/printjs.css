@@ -1,0 +1,86 @@
+.printable {
+    -webkit-print-color-adjust: exact !important;
+}
+[background-color] {
+    z-index: 0;
+    position: relative;
+    -webkit-print-color-adjust: exact !important;
+}
+table tr td, table tr th {
+    white-space: nowrap; 
+    page-break-inside: avoid!important;
+} 
+
+.btn {
+    display: none;
+}
+i.material-icons {
+    display: none;
+}
+
+table.table-theme-light th {
+    background-color: #295FFF!important;
+}
+table.table-theme-light td {
+    background-color: yellow!important;
+}
+table.table-theme-dark th{
+    background-color: #2962ff!important;
+}
+table.table-theme-dark.table-bordered td {
+    background-color: #006f51!important;
+}
+table.table-theme-dark.table-bordered tr:last-child td {
+    background-color: yellow!important;
+}
+
+table.table-theme-light tr td:last-child,
+table.table-theme-dark.table-bordered tr th:last-child,
+table.table-theme-dark.table-bordered tr td:last-child {
+    display: none;
+}
+
+.budget-container {
+    width: 100%;
+}
+@media print{
+    table thead tr th{
+        box-shadow: 0 0 0 1000px red inset;  /* cor para impressão */
+    }
+
+    table.table-theme-dark.table-bordered td {
+        background-color: #006f51!important;
+        color: white;
+    }
+    
+    table.table-theme-dark.table-bordered tr:last-child td {
+        background-color: yellow!important;
+        color: black;
+    }
+
+    /** override **/
+    table .bg-primary {
+        background-color: #007bff!important;
+    }
+    table .text-white {
+        color: white !important;
+    }
+    table .bg-yellow {
+        background-color: yellow!important;
+    }
+    table .bg-success {
+        background-color: #28a745!important;
+    }
+    table .bg-theme-dark {
+        background-color: #006400!important;
+    }
+    table .bg-warning {
+        background-color: #ffc107!important;
+    }
+    table .bg-light-purple {
+        background-color: #b977e8!important;
+    }
+    table .text-success {
+        color: #28a745!important;
+    }
+}

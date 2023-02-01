@@ -1,0 +1,11 @@
+<section id="actionWrapper" class="row mt-3 mb-2">
+    <div class="col-12">
+      <!-- <button class="btn btn-success btn-success-dark float-right" ng-click="vm.addDebt()">
+        <i class="material-icons">add_circle_outline</i>
+        Add GDS/TDS
+      </button> -->
+    </div>
+  </section>
+  <section class="d-flex overflow-x-scroll">
+    <fm-debt ng-repeat="debt in vm.debts track by $index" debt="debt" callback="vm.callback"></fm-debt>
+  </section>

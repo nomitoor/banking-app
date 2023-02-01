@@ -1,0 +1,110 @@
+<table class="table table-bordered table-centered mb-2">
+  <thead>
+    <tr>
+      <th class="text-left align-middle text-white" colspan="3" ng-style="{'background-color': vm.bank.color}">
+        <span ng-if="!vm.category.editing">
+          {{ vm.category.name }}
+        </span>
+        <form ng-if="vm.category.editing" ng-submit="vm.doSaveCategory(vm.category)">
+          <input class="form-control" 
+            ng-model="vm.category.name" auto-focus="true" required
+            ng-class="{'border-danger': !vm.category.name}">
+        </form>
+      </th>
+      <th class="bank-col-actions text-nowrap" ng-style="{'background-color': vm.bank.color}">
+        <button ng-if="!vm.category.editing" class="btn btn-tiny btn-info" ng-click="vm.category.editing=true">
+          <i class="material-icons">edit</i>
+        </button>
+        <button ng-if="vm.category.editing" class="btn btn-tiny btn-success" ng-click="vm.doSaveCategory(vm.category)">
+          <i class="material-icons">check</i>
+        </button>
+        <button ng-if="vm.category.editing" class="btn btn-tiny btn-danger" ng-click="vm.doDeleteCategory(vm.category)">
+          <i class="material-icons">delete</i>
+        </button>
+      </th>
+    </tr>
+  </thead>
+  <tbody ng-if="!vm.category.items.length">
+    <tr>
+      <td colspan="3">There is no item</td>
+    </tr>
+  </tbody>
+  <tbody ng-if="vm.category.items.length">
+    <tr ng-repeat="item in vm.category.items">
+      <td class="text-center position-relative text-nowrap" width="100">
+        <span ng-if="!item.editing">
+          {{ item.date | date: 'dd-MMM-yy' }}
+        </span>
+        <div ng-if="item.editing" class="pl-3">
+          <div class="updown" ng-if="vm.canMove(item)">
+            <a href="javascript:void(0)" 
+              class="btn btn-sm btn-tiny btn-info d-block"
+              ng-click="vm.itemMoveUp(item)">
+              <i class="material-icons">expand_less</i>
+            </a>
+            <a href="javascript:void(0)" 
+              class="btn btn-sm btn-tiny btn-info d-block mt-1"
+              ng-click="vm.itemMoveDown(item)">
+              <i class="material-icons">expand_more</i>
+            </a>
+          </div>
+          <input type="text" class="form-control"
+            uib-datepicker-popup='dd-MMM-yy' ng-model="item.date"
+            is-open="item.openDatePicker" datepicker-options="vm.datePickerOptions"
+            ng-required="true" close-text="Close" show-button-bar="false"
+            ng-click="item.openDatePicker=true"/>
+        </div>
+      </td>
+      <td class="text-left">
+        <span ng-if="!item.editing">
+          {{ item.name }}
+        </span>
+        <input class="form-control"
+          ng-if="item.editing" 
+          ng-model="item.name" auto-focus="true"
+          required
+          ng-class="{'border-danger': !item.name}">
+      </td>
+      <td width="150">
+        <span ng-if="!item.editing">
+          {{ item.amount | currency: '$' }}
+        </span>
+        <span ng-if="item.editing" class="d-flex">
+          <input class="form-control" 
+            ng-model="item.amount"
+            type="number"
+            ng-class="{'border-danger': !item.amount}">
+        </span>
+      </td>
+      <td no-export class="bank-col-actions">
+        <span ng-if="!item.ref_category">
+          <button class="btn btn-sm btn-info btn-tiny" ng-if="!item.editing" ng-click="item.editing=true;vm.rowEditing=true;">
+            <i class="material-icons">edit</i>
+          </button>
+          <span ng-if="item.editing">
+            <button class="btn btn-sm btn-tiny" ng-click="vm.setZero(item)" ng-class="{'btn-info': item.zero, 'btn-outline-info': !item.zero}">
+              <i class="material-icons">exposure_zero</i>
+            </button>
+            <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveExpenseItem(item)">
+              <i class="material-icons">check</i>
+            </button>
+            <button class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteExpenseItem(item)">
+              <i class="material-icons">delete</i>
+            </button>
+          </span>
+        </span> 
+      </td>
+    </tr>
+    <tr>
+      <th class="bg-warning text-dark" colspan="2">Total</th>
+      <th class="bg-warning text-danger">{{ vm.totalExpense | currency: '$' }}</th>
+      <th></th>
+    </tr>
+  </tbody>
+</table>
+<div class="table-actions text-right">
+  <button class="btn btn-sm btn-success btn-success-dark" ng-click="vm.addExpenseItem()">
+    <i class="material-icons">add_circle_outline</i>
+    Row
+  </button>
+</div>

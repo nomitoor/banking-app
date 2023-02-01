@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="row mt-5">
+      <div class="col-md-5 offset-md-4 col-12">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Forgot your password
+          </div>
+          <div class="card-body" ng-init="user={}">
+            <form ng-submit="!vm.isWaiting && vm.forgot(user)" ng-if="!vm.forgotSuccess">
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="exampleInputEmail1" required ng-model="user.email">
+              </div>
+              <div ng-if="vm.isWaiting">
+                Waiting...
+              </div>
+              <div class="text-danger" ng-if="vm.errorText!=''">{{ vm.errorText }}</div>
+              <div class="clearfix mt-3">
+                <a class="btn-link float-left mt-2" href="#!/login">Return to login</a>
+                
+                <button type="submit" class="btn btn-success btn-success-dark float-right" ng-disabled="vm.isWaiting">
+                  <i class="material-icons">refresh</i>
+                  Reset
+                </button>
+              </div>
+            </form>
+            <div ng-if="vm.forgotSuccess">
+              <div class="alert alert-success">Your request has been sent, please check your email and follow instruction to reset your account!</div> 
+              <div class="text-center">
+                <a class="btn btn-success btn-success-dark mt-2" href="#!/login">Return to login</a>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  

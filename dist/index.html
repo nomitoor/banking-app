@@ -1,0 +1,59 @@
+<!doctype html>
+<html ng-app="fm" ng-cloak>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+        <link rel="icon" href="img/logo.png" type="image/png" sizes="512x512">
+        <title>FINANCE MANAGER 2021</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="app.min.css?r=53919&">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        
+    </head>    
+    <body ng-controller="MainController as vm" ng-click="vm.bodyClick()">
+      <div class="shine-slogan text-white py-1 px-3 d-flex">
+        <span class="d-none d-sm-block">
+          Shine's Budget Dividend & Retirement Calculator
+        </span>
+        <span class="ml-auto">{{ vm.currentTime | date:'MMM d, y' }}</span>
+        <span class="ml-2 rounded-lg bg-yellow text-dark px-1">{{ vm.currentTime | date:'hh:mm a' }}</span>
+        <span class="ml-2">{{ vm.timezone }}</span>
+      </div>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-theme-dark">
+        <a class="navbar-brand navbar-brand-shine text-white fs-2 mb-1" href="/">
+          <strong>Shine's BDR</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" ng-click="vm.openMenu=!vm.openMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="navbar-collapse" id="navbarSupportedContent" 
+          ng-class="{'collapse': !vm.openMenu}"
+          ng-include="'views/navbar/navbar-menu.html'">
+        </div>
+      </nav>
+      
+      <div class="container-fluid">
+        <div class="container-wrapper">
+          <ng-view></ng-view>
+        </div>
+        <footer class="py-2 text-right">&copy; Shine's BDR - Build 27369190</footer>
+      </div>
+      <confirm-modal></confirm-modal>
+      <buy-stock></buy-stock>
+      <sell-stock></sell-stock>
+      <toast></toast>
+      
+      <script type="text/javascript" src="libs/highcharts.js"></script>
+      <script type="text/javascript" src="libs/highcharts-3d.js"></script>
+      <script type="text/javascript" src="libs/moment.min.js"></script>
+      <script type="text/javascript" src="libs/moment-timezone.min.js"></script>
+      <script type="text/javascript">
+        const ENV='production';
+      </script>
+      <script type="text/javascript" src="lib.min.js"></script>
+      <script type="text/javascript" src="app.min.js?r=53919&"></script>
+      
+    </body>
+</html>

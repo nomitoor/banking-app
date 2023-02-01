@@ -1,0 +1,102 @@
+<section id="actionWrapper" class="row mt-3 mb-2">
+    <div class="col-12">
+      <a href="#!/dividend-calculator-add" class="btn btn-success btn-success-dark float-right">
+        <i class="material-icons">add_circle_outline</i>
+        Add Stock
+      </a>
+    </div>
+  </section>
+  <section class="d-flex overflow-x-scroll">
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="table-content">
+          <div ng-if="!vm.stocks.length" class="alert alert-warning">You don't have any stock now. Click (+) Add Stock to add one.!</div>
+          <table class="table table-bordered table-centered table-stock" ng-if="vm.stocks.length">
+            <thead>
+              <tr>
+                <th class="text-left align-top" width="230">
+                  Stock Ticker
+                </th>
+                <th ng-repeat="stock in vm.stocks">
+                  <span ng-if="!stock.editing">
+                    {{ stock.code }}
+                  </span>
+                  <input ng-if="stock.editing" class="form-control d-inline" 
+                    ng-keypress="$event.keyCode==13?vm.saveStock(stock):void()" 
+                    ng-model="stock.code" auto-focus="true"
+                    style="width:70px">
+                  
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left">
+                  Initial Investment
+                </td>
+                <td ng-repeat="stock in vm.stocks">
+                    <span ng-if="!stock.editing">{{ stock.init_amount | currency:'$' }}</span>
+                    <input ng-if="stock.editing" class="form-control d-inline" 
+                    ng-keypress="$event.keyCode==13?vm.saveStock(stock):void()" 
+                    ng-model="stock.init_amount"
+                    style="width:70px">
+                </td>  
+              </tr>
+              <tr>
+                <td class="text-left">
+                  Commission
+                </td>
+                <td ng-repeat="stock in vm.stocks">
+                    {{ stock.commission | currency:'$' }}
+                </td>  
+              </tr>
+              <tr>
+                <td class="text-left">
+                  Year
+                </td>
+                <td ng-repeat="stock in vm.stocks">
+                  <span ng-if="!stock.editing">{{ stock.year }}</span>
+                  <year-selector ng-if="stock.editing" ng-model="stock.year"></year-selector>
+                </td>  
+              </tr>
+              <tr>
+                <td></td>
+                <td ng-repeat="stock in vm.stocks">
+                  <button class="btn btn-sm btn-info btn-tiny d-inline" ng-if="!stock.editing" ng-click="stock.editing=true">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  
+                  <span ng-if="stock.editing">
+                    <button class="btn btn-sm btn-success btn-tiny d-inline" ng-click="vm.saveStock(stock)">
+                      <i class="material-icons">check</i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-tiny d-inline" ng-click="vm.deleteStock(stock)">
+                      <i class="material-icons">delete</i>
+                    </button>
+                  </span>
+                </td>
+              </tr>
+              <tr ng-repeat="field in vm.fields">
+                <td class="text-left" colspan="{{field.heading?vm.stocks.length+1:1}}" ng-class="{'heading':field.heading}">
+                  {{ field.name }}
+                </td>
+                <td ng-repeat="stock in vm.stocks" 
+                    ng-if="!field.heading"
+                    ng-bind-html="stock[field.field]|stockformat:field|displayformat:field.format:stock[field.field]">
+                </td>
+              </tr>
+              <tr>
+                <td class="text-left bg-warning">Portfolio Average Yield</td>
+                <td colspan="{{vm.stocks.length}}" class="bg-warning">
+                  {{ vm.averageYield }}% / annually
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-actions">
+          
+        </div>
+      </div>
+    </div>
+  </section>

@@ -1,0 +1,134 @@
+<div class="card card-theme-dark shadow budget-container mr-2 printable" id="b_{{ vm.budget.id }}">
+  <div class="card-header text-center">
+    <strong ng-if="!vm.budget.editing">{{ vm.budget.name }}</strong>
+    <!-- <input ng-if="vm.budget.editing" class="form-control d-inline" 
+      ng-model="vm.budget.name" 
+      ng-keypress="$event.keyCode==13?vm.saveBudget(vm.budget):void()" 
+      auto-focus="true"
+      style="width:250px"> -->
+    <span class="float-right">
+      <button ng-if="!vm.budget.editing" class="btn btn-sm btn-info btn-tiny" ng-click="vm.editBudget()">
+        <i class="material-icons">edit</i>
+      </button>
+      <button ng-if="!vm.budget.editing" class="btn btn-tiny btn-info" ng-click="vm.printBudget(vm.budget)">
+        <i class="material-icons">print</i>
+      </button>
+      <button ng-if="!vm.budget.editing" class="btn btn-tiny btn-success" ng-click="vm.addBudget(vm.budget)">
+        <i class="material-icons">add_circle_outline</i>
+      </button>
+      <button class="btn btn-tiny btn-info" csv-download 
+        container-id="budgetWrapper-{{ vm.budget.id }}" 
+        filename="{{ vm.budget.name }}.csv">
+        <i class="material-icons">file_download</i>
+      </button>
+      <!-- <span ng-if="vm.budget.editing">
+        <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveBudget(vm.budget)">
+          <i class="material-icons">check</i>
+        </button>
+        <button class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteBudget(vm.budget)">
+          <i class="material-icons">delete</i>
+        </button>
+        
+      </span> -->
+    </span>
+  </div>
+  <div class="card-body pl-3 pr-3 pt-2" id="budgetWrapper-{{ vm.budget.id }}">
+    <section id="chartWarpper">
+      <div id="chartContainer-{{vm.budget.id}}" class="chart-container text-center"></div>
+    </section>
+    <section id="tableWrapper" class="mt-2">
+      <annual-income items="vm.budget.annual_incomes" budget-id="{{ vm.budget.id }}"></annual-income>
+      <net-asset items="vm.budget.netassets" budget-id="{{ vm.budget.id }}" callback="vm.netAssetCallback"></net-asset>
+      <liability items="vm.budget.liabilities" budget-id="{{ vm.budget.id }}" callback="vm.liabilityCallback"></liability>
+      <table class="table table-bordered table-centered font-weight-bold table-theme-light mt-5">
+        <tr>
+          <th class="text-left bg-success">Asset / Liability</th>
+          <td width="100" class="text-success" ng-class="{'text-danger': vm.assetPerLiability<0}">{{ vm.assetPerLiability | currency : '$' }}</td>
+          <td width="75"></td>
+        </tr>
+      </table>
+
+      <fm-category category="vm.budget.income" callback="vm.categoryCallback"></fm-category>
+      <fm-category category="vm.budget.expense" callback="vm.categoryCallback"></fm-category>
+      <table class="table table-bordered table-centered font-weight-bold table-theme-light">
+        <tr>
+          <th class="text-left">Surplus / Deficit</th>
+          <td width="90" class="text-success" ng-class="{'text-danger': vm.budget.surplus_weekly<0}">{{ vm.budget.surplus_weekly| currency : '$' }}</td>
+          <td width="100" class="text-success" ng-class="{'text-danger': vm.budget.surplus_bi_weekly<0}">{{ vm.budget.surplus_bi_weekly| currency : '$' }}</td>
+          <td width="100" class="text-success" ng-class="{'text-danger': vm.budget.surplus_monthly<0}">{{ vm.budget.surplus_monthly| currency : '$' }}</td>
+          <td width="100" class="text-success" ng-class="{'text-danger': vm.budget.surplus_yearly<0}">{{ vm.budget.surplus_yearly| currency : '$' }}</td>
+          <td class="" width="75"></td>
+        </tr>
+      </table>
+      <div class="table-actions text-right">
+        <button class="btn btn-sm btn-success btn-success-dark mb-3" 
+          ng-click="vm.addCategory()">
+          <i class="material-icons">add_circle_outline</i>
+          Category
+        </button>
+      </div>
+      <div ng-if="vm.budget.categories.length" mt-2>
+        <fm-category ng-repeat="category in vm.budget.categories" category="category" callback="vm.categoryCallback"></fm-category>
+      </div>
+      
+    </section>
+  </div>
+  <div class="card-footer">
+    <!-- <button class="btn btn-success btn-success-dark float-right" ng-click="vm.addCategory()">
+      <i class="material-icons">add_circle_outline</i>
+      Category
+    </button> -->
+    <!-- <button class="btn btn-success btn-info float-right mr-2" ng-click="vm.drawChart()">
+      <i class="material-icons">donut_small</i>
+      Chart
+    </button> -->
+  </div>
+</div>
+
+<div class="modal d-block" ng-if="vm.budget.editing">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form ng-submit="vm.saveBudget(vm.budgetEdit)">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Budget</h5>
+          <button type="button" class="close" ng-click="vm.budget.editing=false">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Budget Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" ng-model="vm.budgetEdit.name">
+            </div>
+          </div>
+          <!-- <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Chart Title</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" ng-model="vm.budgetEdit.title">
+            </div>
+          </div> -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Pie Chart Title</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" ng-model="vm.budgetEdit.pie_title">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger mr-auto" ng-click="vm.deleteBudget(vm.budget)">
+            <i class="material-icons">delete</i>
+            Delete
+          </button>
+          <button type="button" class="btn btn-secondary" ng-click="vm.budget.editing=false">Close</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="material-icons">check</i>
+            Save
+          </button>  
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" ng-if="vm.budget.editing"></div>

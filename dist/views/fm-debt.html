@@ -1,0 +1,105 @@
+<div id="d_{{ vm.debt.id }}" class="card card-theme-dark shadow budget-container mr-2">
+  <div class="card-header text-center">
+    <strong ng-if="!vm.debt.editing">{{ vm.debt.name }} {{ vm.debt.time }}</strong>
+    <span ng-if="vm.debt.editing">
+      <input class="form-control d-inline" 
+        ng-model="vm.debt.name" 
+        ng-keypress="$event.keyCode==13?vm.saveDebt(vm.debt):void()" 
+        auto-focus="true"
+        style="width:250px">
+      <!-- <div class="form-check form-check-inline ml-2">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" ng-model="vm.debt.d_type" ng-value="1">
+        <label class="form-check-label fs-4" for="inlineRadio1">GDS</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" ng-model="vm.debt.d_type" ng-value="2">
+        <label class="form-check-label fs-4" for="inlineRadio2">TDS</label>
+      </div> -->
+    </span>
+    <span class="float-right">
+      <button ng-if="!vm.debt.editing" class="btn btn-sm btn-info btn-tiny" ng-click="vm.debt.editing=true">
+        <i class="material-icons">edit</i>
+      </button>
+      <span ng-if="vm.debt.editing">
+        <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveDebt(vm.debt)">
+          <i class="material-icons">check</i>
+        </button>
+        <!-- <button ng-if="!vm.debt.persistent" class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteDebt(vm.debt)">
+          <i class="material-icons">delete</i>
+        </button> -->
+      </span>
+      <button ng-if="!vm.debt.editing" class="btn btn-tiny btn-info" ng-click="vm.printDebt(vm.debt)">
+        <i class="material-icons">print</i>
+      </button>
+      <button class="btn btn-tiny btn-info" csv-download 
+        container-id="debtWrapper-{{ vm.debt.id }}" 
+        filename="{{ vm.debt.name }}.csv">
+        <i class="material-icons">file_download</i>
+      </button>
+    </span>
+  </div>
+  <div class="card-body pl-3 pr-3 pt-2" id="debtWrapper-{{ vm.debt.id }}">
+    <section id="chartWarpper">
+      <div id="ChartContainer-{{vm.debt.id}}" class="debt-chart-container text-center"></div>
+    </section>
+    <section id="tableWrapper" class="mt-2">
+      <!--income-->
+      <debt-category category="vm.debt.incomes[0]" callback="vm.categoryCallback"></debt-category>
+      <!-- expenses -->
+      <debt-category ng-repeat="category in vm.debt.expenses track by $index" category="category" callback="vm.categoryCallback"></debt-category>
+      <!-- liability -->
+      <debt-category category="vm.debt.liabilities[0]" c-type='liability' callback="vm.categoryCallback"></debt-category>
+      
+      <table class="table table-bordered table-centered font-weight-bold table-theme-dark">
+        <thead>
+          <th colspan="2" class="text-left">Summary</th>
+        </thead>
+        <tr>
+          <td class="text-left blue-background" width="30%">Total Incomes</td>
+          <td class="text-right">
+            <span class="cell text-success">
+              {{ vm.debt.totalIncomes | currency: '$' }}
+            </span>
+          </td>
+          <td class="d-none"></td>
+        </tr>
+        <tr>
+          <td class="text-left blue-background">Total Expenses</td>
+          <td class="text-right">
+            <span class="cell text-danger">
+              {{ vm.debt.totalExpenses | currency: '$' }}
+            </span>
+          </td>
+          <td class="d-none"></td>
+        </tr>
+        <tr>
+          <td class="text-left blue-background">Total Liabilities</td>
+          <td class="text-right">
+            <span class="cell text-danger">
+              {{ vm.debt.totalLiabilities | currency: '$' }}
+            </span>
+          </td>
+          <td class="d-none"></td>
+        </tr>
+        <tr ng-if="vm.debt.d_type==1">
+          <td class="text-left blue-background">GDS</td>
+          <td class="text-success text-right" ng-class="{'text-danger': vm.debt.gds>32}">{{ vm.debt.gds }}%</td>
+          <td class="d-none"></td>
+        </tr>
+        <tr ng-if="vm.debt.d_type==2">
+          <td class="text-left blue-background">TDS</td>
+          <td class="text-success text-right" ng-class="{'text-danger': vm.debt.gds>40}">{{ vm.debt.tds }}%</td>
+          <td class="d-none"></td>
+        </tr>
+      </table>
+
+    </section>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-success btn-success-dark float-right" ng-click="vm.addCategory()">
+      <i class="material-icons">add_circle_outline</i>
+      Category
+    </button>
+    
+  </div>
+</div>

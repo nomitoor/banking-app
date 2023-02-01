@@ -1,0 +1,465 @@
+<section id="actionWrapper" class="row mt-3 mb-2">
+  <div class="col-md-6 offset-md-3 col-12">
+    <div class="card">
+      <div class="card-body">
+        <form ng-submit="vm.calculate(vm.newStock)" name="vm.newStockForm">
+          <div class="mb-3 form-group row">
+            <label class="col-sm-4 col-form-label">Portfolio<span class="text-danger">*</span></label>   
+            <div class="col-sm-8">
+              <dd-portfolio
+                dd-model="vm.newStock"
+                dd-sub-model="portfolio"
+                dd-change="vm.onChangePortfolio"
+                has-edit="false"
+                has-delete="false"
+                option="vm.portfolioOption">
+              </dd-portfolio>
+            </div>
+          </div>
+          <div class="mb-3 form-group row">
+            <label class="col-sm-4 col-form-label"></label>
+            <div class="col-sm-8">
+              <div>
+                Buying Power: 
+                <strong class="text-success">{{ (vm.currentPortfolio.balance||0) | currency:'$' }}</strong>
+                <a href="javascript:void(0)" class="ml-2" ng-click="vm.showAddFundModal=true">Add Fund</a>
+              </div>
+              <div class="text-danger" ng-if="(vm.newStock.initType === 'cash' && vm.newStock.init_amount>vm.currentPortfolio.balance) || (vm.newStock.initType === 'share') && vm.newStock.init_share*vm.newStock.init_price>vm.currentPortfolio.balance">
+                <i class="material-icons">warning</i>
+                You seems invest more than current balance.
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 form-group row">
+            <label class="col-sm-4 col-form-label">Symbol<span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <dd-stock dd-model="vm.newStock" placeholder="Type to search a stock" required></dd-stock>
+            </div>
+          </div>
+          <div class="mb-1 form-group row">
+            <label class="form-label col-sm-4">Initial Investment<span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <div class="form-check form-check-inline">
+                  <input ng-model="vm.newStock.initType" class="form-check-input" type="radio" id="initCash" value="cash">
+                  <label class="form-check-label" for="initCash">Cash</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input ng-model="vm.newStock.initType" class="form-check-input" type="radio" id="initShare" value="share">
+                  <label class="form-check-label" for="initShare">Share</label>
+                </div>
+                <span class="ml-auto text-success" ng-if="vm.newStock.initType==='share'">{{ ((vm.newStock.init_share * vm.newStock.init_price) + vm.newStock.commission)|currency:'$' }}</span>
+                <!-- <input type="number" step="any" class="form-control" ng-model="vm.newStock.init_amount" required> -->
+                <!-- <span class="input-group-text">{{ vm.stockData.currency }}</span> -->
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 form-group row" ng-if="vm.newStock.initType==='cash'">
+            <label class="form-label col-sm-4"></label>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" step="any" min="0" class="form-control" ng-model="vm.newStock.init_amount" required>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 form-group row" ng-if="vm.newStock.initType==='share'">
+            <div class="col-sm-12">
+              <div class="d-flex" ng-if="vm.newStock.initType==='share'">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      No.<span class="d-none d-md-inline"> of Stocks</span>
+                    </span>
+                  </div>
+                  <input type="number" min="0" class="form-control" ng-model="vm.newStock.init_share" required>
+                </div>
+                <div class="input-group ml-2">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <span class="d-none d-md-inline">At Price </span>$
+                    </span>
+                  </div>
+                  <input type="number" min="0" step="any" class="form-control" ng-model="vm.newStock.init_price" required>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="mb-3 form-group row">
+            <label class="form-label col-sm-4">Commission<span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="number" step="any" class="form-control" ng-model="vm.newStock.commission" required>
+            </div>
+          </div>
+          <div class="mb-3 form-group row">
+            <label class="form-label col-sm-4">Dividend Frequency<span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-model="vm.newStock.dividend_frequency">
+                <option value="auto">Auto Calculate</option>
+                <option value="growth">Growth</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="semi-annually">Semi-Annually</option>
+                <option value="annually">Annually</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3 form-group row">
+            <label class="form-label col-sm-4">Year<span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <year-selector ng-model="vm.newStock.year" required></year-selector>
+            </div>
+          </div>
+        
+          <div class="d-flex">
+            <button type="button" class="btn btn-success btn-success-dark mr-auto"
+              ng-disabled="!vm.newStockForm.$valid || !vm.newStock.stock || !vm.newStock.portfolio || !vm.stockData.code || vm.loading || vm.newStock.init_amount>vm.currentPortfolio.balance"
+              ng-click="vm.buy()">
+              <i class="material-icons d-none d-md-inline">shopping_cart</i>
+              Buy
+            </button>
+            
+            <div class="btn-group">
+              <button type="button" class="btn btn-success btn-success-dark dropdown-toggle mr-2"
+                ng-disabled="!vm.stockData.code || vm.loading"
+                ng-click="vm.addToDd=!vm.addToDd; $event.stopPropagation()">
+                <i class="material-icons d-none d-md-inline">add</i>
+                Add To
+              </button>
+              <div class="dropdown-menu" ng-class="{'show': vm.addToDd}">
+                <a ng-click="vm.addToDatabank()" class="dropdown-item" href="javascript:void(0)">Databank</a>
+                <a ng-click="vm.addToWatchlist()" class="dropdown-item" href="javascript:void(0)">Watchlist</a>
+                <a ng-click="vm.addToScreener()" class="dropdown-item" href="javascript:void(0)">Screener</a>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning"
+              ng-disabled="!vm.newStockForm.$valid || !vm.newStock.stock || !vm.newStock.portfolio || vm.loading">
+              <i class="material-icons d-none d-md-inline">send</i>
+              Calculate
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="alert alert-info my-2" ng-show="vm.loading">Hold a moment! Getting data & calculating...</div>
+  </div>
+  <div class="dividend-calculation mt-2 col-12" ng-if="vm.stockData.symbol">
+    <div class="container0 mt-2">
+      <div class="d-md-flex justify-content-center">
+        <div class="table-responsive mx-md-0 mw-600 mx-auto">
+          <table class="table table-bordered nowrap">
+            <tr>
+              <td>Stock Name</td>
+              <td class="text-center">{{ vm.stockData.displayName }}</td>
+              <td>Beta (5Y Monthly)</td>
+              <td class="text-center">{{ vm.stockData.beta | stockformat:{round: 2} }}</td>
+            </tr>
+            <tr>
+              <td>Symbol</td>
+              <td class="text-center">{{ vm.stockData.symbol }}</td>
+              <td>PE Ratio (TTM)</td>
+              <td class="text-center">{{ vm.stockData.trailingPE | stockformat:{round: 2} }}</td>
+            </tr>
+            <tr>
+              <td>Exchange</td>
+              <td class="text-center">{{ vm.stockData.exchange }}</td>
+              <td>50-Day Moving Average</td>
+              <td class="text-center">{{ vm.stockData.fiftyDayAverage | stockformat:{round: 2} }}</td>
+            </tr>
+            <tr>
+              <td class="text-bold">Share Price</td>
+              <td class="text-bold text-center bg-yellow text-nowrap" ng-bind-html="vm.stockData.priceChangeDisplay"></td>
+              <td>200-Day Moving Average </td>
+              <td class="text-center">{{ vm.stockData.twoHundredDayAverage | stockformat:{round: 2} }}</td>
+            </tr>
+            <tr>
+              <td>Dividend Frequency</td>
+              <td class="text-center text-capitalize">{{ vm.stockData.dividendFrequency }}</td>
+              <td>Ex-Dividend Date</td>
+              <td class="text-center">
+                <span ng-if="vm.stockData.exDividendDate">
+                  {{ vm.stockData.exDividendDate | stockformat:{dateFormat:'mmm dd, yyyy'} }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-bold">Dividend Per Share</td>
+              <td class="text-bold text-center text-white bg-success">{{ vm.stockData.dividendsPerShare | stockformat:{round:4} }}</td>
+              <td>Payment Date</td>
+              <td class="text-center">
+                <span ng-if="vm.stockData.dividendDate">
+                  {{ vm.stockData.dividendDate | stockformat:{dateFormat:'mmm dd, yyyy'} }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>Dividend Yield</td>
+              <td class="text-center">{{ vm.stockData.dividendYield | stockformat:{unit:'%'} }}</td>
+              <td></td>
+              <td class="text-center"></td>
+            </tr>
+            <tr>
+              <td>52 Week Range</td>
+              <td class="text-center">{{ vm.stockData.fiftyTwoWeekLow }} - {{ vm.stockData.fiftyTwoWeekHigh }}</td>
+              <td></td>
+              <td class="text-center"></td>
+            </tr>
+            <tr>
+              <td>Payout Ratio </td>
+              <td class="text-center">{{ vm.stockData.payoutRatio | stockformat:{unit:'%'} }}</td>
+              <td>Dividend Growth Rate</td>
+              <td class="text-center">{{ vm.stockData.dividendGrowthRate }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="table-responsive ml-md-3 mx-md-0 mw-450 mx-auto">
+          <table class="table table-bordered table-centered nowrap">
+            <tbody>
+              <tr>
+                <td class="bg-primary text-white">Year</td>
+                <td class="bg-success text-white">W/O Drip</td>
+                <td class="bg-theme-dark text-white">With Drip</td>
+                <td class="bg-primary text-white">Drip Share</td>
+                <td class="bg-primary text-white">Total Share</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Yearly/Monthly</td>
+                <td>Yearly/Monthly</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr ng-if="vm.stockData.dividendFrequency.toLowerCase()==='growth'">
+                <td colspan="5">
+                  <div class="alert alert-warning">Growth stock does not have dividend information</div>
+                </td>
+              </tr>
+              <tr ng-if="vm.stockData.dividendFrequency.toLowerCase()!=='growth'"
+                ng-repeat="y in vm.fiveYears track by $index">
+                <td>
+                  <a class="btn-link" href="javascript:void(0)" ng-click="vm.goto('year'+y)">
+                    {{ y }}
+                  </a>                  
+                </td>
+                <td>
+                  <span ng-if="y<=vm.calculatedData.year">
+                    {{ vm.dividends[(y*vm.stockData.tick)-2].dividendCash|currency:'$' }} / {{ vm.dividends[(y*vm.stockData.tick)-2].dividendCash/12|currency:'$' }}
+                  </span>
+                </td>
+                <td>
+                  <span ng-if="y<=vm.calculatedData.year">
+                    {{ vm.dividends[(y*vm.stockData.tick)-2].dividendCashDrip|currency:'$' }} / {{ vm.dividends[(y*vm.stockData.tick)-2].dividendCashDrip/2|currency:'$' }}
+                  </span>
+                </td>
+                <td>
+                  <span ng-if="y<=vm.calculatedData.year">
+                    {{ vm.dividends[(y*vm.stockData.tick)-2].dripShareInYear }}
+                  </span>
+                </td>
+                <td>
+                  <span ng-if="y<=vm.calculatedData.year">
+                    {{ vm.dividends[(y*vm.stockData.tick)-2].numberOfShare }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div ng-if="vm.stockData.dividendFrequency.toLowerCase()!=='growth'" class="container controls">
+      <div class="mw-1070 mx-auto">
+        <button class="btn btn-sm btn-info" csv-download 
+          container-id="actionWrapper" 
+          filename="{{ vm.stockData.symbol }}.csv">
+          <i class="material-icons">file_download</i>
+          Download CSV
+        </button>
+        <button class="btn btn-sm btn-info" ng-click="vm.print()">
+          <i class="material-icons">print</i>
+          Print
+        </button>
+      </div>
+    </div>
+    <div id="dividendCalculatorResult" class="container mt-2">
+      <div class="alert alert-danger" ng-if="vm.stockData.dividendFrequency.toLowerCase()==='growth'">
+        <div class="alert alert-warning">Growth stock does not have dividend information</div>
+      </div>
+      <div class="col-12" ng-if="vm.calculatedData.initType === 'share'">
+        <div class="alert alert-warning">
+          You're calculating at the custom price 
+          <strong>{{ vm.calculatedData.init_price | currency:'$' }}</strong>
+        </div>
+      </div>
+      <table ng-if="vm.stockData.dividendFrequency.toLowerCase()!=='growth'" class="table table-bordered table-centered table-stock mw-1070 mx-auto">
+        <tr id="year1">
+          <th class="bg-primary text-white text-left">{{ vm.initDividend.title }}</th>
+          <th class="bg-primary text-white" colspan="2">{{ vm.initDividend.title }}</th>
+        </tr>
+        <tr>
+          <td class="text-left">Book Value (Intial Investment {{ vm.initDividend.title }})</td>
+          <td colspan="2">{{ vm.initDividend.investmentCash |currency:'$'}}</td>
+        </tr>
+        <tr>
+          <td class="text-left">Cash Balance in Account after Investment</td>
+          <td colspan="2">
+            {{ vm.initDividend.cashBalance|currency:'$' }}
+          </td>
+        </tr>
+        <tr>
+          <td class="text-left">Inital Share Bought</td>
+          <td colspan="2" class="bg-yellow">{{ vm.initDividend.numberOfShare }}</td>
+        </tr>
+        <tr>
+          <td class="text-left">Average Cost</td>
+          <td colspan="2">{{ vm.initDividend.averageCost | currency:'$':4 }}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="bg-success text-white">W/O Drip</td>
+          <td class="bg-theme-dark text-white">With Drip</td>
+        </tr>
+
+        <tr ng-repeat-start="dividend in vm.dividends"
+          ng-show="$index>=0 && dividend.newYear"
+          id="year{{dividend.year}}">
+          <td colspan="3" class="bg-yellow py-1">&nbsp;</td>
+        </tr>
+        <tr>
+          <th class="bg-primary text-white text-left">{{ dividend.title }}</th>
+          <th class="bg-primary text-white" colspan="2">{{ dividend.title }}</th>
+        </tr>
+        <tr>
+          <td class="text-left">No. of Drip Shares Received in {{ dividend.dividendShort }}</td>
+          <td></td>
+          <td>
+            {{ dividend.dripShare }}
+          </td>
+        </tr>
+        <tr>
+          <td class="text-left"> Total No. of Shares Received end of {{ dividend.dividendShort }}</td>
+          <td class="bg-yellow">
+            {{ vm.stockData.numberOfShare }}
+          </td>
+          <td class="bg-yellow">
+            {{ dividend.numberOfShare }}
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="bg-success text-white">W/O Drip</td>
+          <td class="bg-theme-dark text-white">With Drip</td>
+        </tr>
+        <tr ng-if="dividend.endYear">
+          <td class="text-left"> Total No. of Shares recived in Year {{ dividend.year }}</td>
+          <td class="bg-warning"></td>
+          <td class="bg-warning">
+            {{ dividend.dripShareInYear }}
+          </td>
+        </tr>
+        <tr>
+          <td class="text-left">Dividend-Cash Received W/O DRIP and With Drip {{ dividend.dividendShort }}</td>
+          <td>
+            {{ dividend.dividendCash | currency:'$' }}
+          </td>
+          <td>
+            {{ dividend.dividendCashDrip | currency:'$' }}
+          </td>
+        </tr>
+        <tr>
+          <td class="text-left">Cash Received from Drip Shares {{ dividend.dividendShort }}</td>
+          <td></td>
+          <td>
+            {{ dividend.cashDripReceive | currency:'$' }}
+          </td>
+        </tr>
+        <tr ng-if="dividend.endYear">
+          <td class="text-left">Total Cash Received after Drip end of year {{ dividend.year }}</td>
+          <td class="bg-light-purple">
+            {{ dividend.upToNowEarning | currency:'$' }}
+          </td>
+          <td class="bg-light-purple">
+            {{ dividend.upToNowEarningDrip | currency:'$'}}
+          </td>
+        </tr>
+        <tr ng-if="dividend.endYear">
+          <td class="text-left">Portfolio Unrealized Gain/Loss year {{ dividend.year }}</td>
+          <td class="text-success">
+            {{ dividend.profit | stockformat:{round:2, unit: '%'} }}
+          </td>
+          <td class="text-success">
+            {{ dividend.profitDrip | stockformat:{round:2, unit: '%'} }}
+          </td>
+        </tr>
+        <tr ng-repeat-end="">
+          <td class="text-left">Portfolio Cash W/O Drip and With Drip end of {{ dividend.dividendShort }} </td>
+          <td>
+            {{ dividend.investmentCash|currency:'$' }}
+          </td>
+          <td>
+            {{ dividend.investmentCashDrip|currency:'$' }}
+          </td>
+        </tr>
+        
+      </table>
+    </div>
+  </section>
+</section>
+<section id="addFund" ng-if="vm.showAddFundModal">
+  <div class="modal d-block">
+    <div class="modal-dialog" ng-init="amount=''">
+      <div class="modal-content">
+        <form ng-submit="vm.onAddFund(amount, vm.currentPortfolio)">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <span>Add Fund</span>
+            </h5>
+            <button type="button" class="close" ng-click="vm.showAddFundModal=false">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row">
+              <div class="col-sm-12">
+                Input amount you would like to add to portfolio
+                <strong class="text-danger">{{ vm.currentPortfolio.name }}</strong>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Current balance</label>
+              <div class="col-sm-8">
+                <strong class="form-control">{{ (vm.currentPortfolio.balance || 0) | currency:'$' }}</strong>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Amount</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <input type="number" step="0.01" class="form-control" ng-model="amount" auto-focus="true">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" ng-click="vm.showAddFundModal=false">Close</button>
+            <button type="submit" class="btn btn-success">
+              <i class="material-icons">attach_money</i>
+              <span>Add</span>
+            </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" ng-if="vm.showAddFundModal"></div>
+</section>

@@ -1,0 +1,79 @@
+<ul class="navbar-nav mr-auto" ng-if="vm.isLoggedIn">
+  <li class="nav-item" ng-class="{'active':vm.currentPath=='/budgets'}">
+    <a class="nav-link text-bold active" aria-current="page" href="javascript:void(0)" ng-click="vm.navigate('budgets')">Budget</a>
+  </li>
+  <li class="nav-item" ng-class="{'active':vm.currentPath=='/gds-tds'}">
+    <a class="nav-link text-bold active" aria-current="page" href="javascript:void(0)" ng-click="vm.navigate('gds-tds')">GDS/TDS</a>
+  </li>
+  <li class="nav-item dropdown" 
+    ng-class="{'active':vm.currentPath=='/stock-valuable'||vm.currentPath=='/intrinsic-value'}">
+    <a class="nav-link text-bold active dropdown-toggle" 
+      href="javascript:void(0)" 
+      ng-click="vm.showDropdown('stockDd', $event)">Stock Valuable</a>
+    <div class="dropdown-menu" ng-class="{'show': vm.dropdownMenu.stockDd}">
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('stock-valuable')"
+        ng-class="{'active':vm.currentPath=='/stock-valuable'}">
+        Fundamental Stock Analysis
+      </a>
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('intrinsic-value')"
+        ng-class="{'active':vm.currentPath=='/intrinsic-value'}"
+        >Intrinsic Value of Stocks</a>
+    </div>
+  </li>
+  <!-- <li class="nav-item" ng-class="{'active':vm.currentPath=='/dividend-calculator'}">
+    <a class="nav-link text-bold active" aria-current="page" href="javascript:void(0)" ng-click="vm.navigate('dividend-calculator')">Dividend Calculator</a>
+  </li> -->
+  <li class="nav-item dropdown" 
+    ng-class="{'active':vm.currentPath=='/dividend-summary'||vm.currentPath=='/dividend-calculator'}">
+    <a class="nav-link text-bold active dropdown-toggle" 
+      href="javascript:void(0)" 
+      ng-click="vm.showDropdown('dividendDd', $event)">Dividend Investment</a>
+    <div class="dropdown-menu" ng-class="{'show': vm.dropdownMenu.dividendDd}">
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('dividend-calculator')"
+        ng-class="{'active':vm.currentPath=='/dividend-calculator'}"
+        >Dividend Calculator</a>
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('dividend-summary')"
+        ng-class="{'active':vm.currentPath=='/dividend-summary'}"
+        >Dividend Payout Summary</a>
+    </div>
+  </li>
+  <li class="nav-item dropdown" 
+    ng-class="{'active':vm.currentPath=='/databank'||vm.currentPath=='/screener'||vm.currentPath=='/watchlist'}">
+    <a class="nav-link text-bold active dropdown-toggle" 
+      href="javascript:void(0)" 
+      ng-click="vm.showDropdown('stocksDd', $event)">Stocks</a>
+    <div class="dropdown-menu" ng-class="{'show': vm.dropdownMenu.stocksDd}">
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('databank')"
+        ng-class="{'active':vm.currentPath=='/databank'}"
+        >Databank</a>
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('watchlist')"
+        ng-class="{'active':vm.currentPath=='/watchlist'}"
+        >Watchlist</a>
+      <a class="dropdown-item" href="javascript:void(0);" 
+        ng-click="vm.navigate('screener')"
+        ng-class="{'active':vm.currentPath=='/screener'}"
+        >Screener</a>
+    </div>
+  </li>
+  <li class="nav-item" ng-class="{'active':vm.currentPath=='/portfolios'}">
+    <a class="nav-link text-bold active" aria-current="page" href="javascript:void(0)" ng-click="vm.navigate('portfolios')">Portfolios</a>
+  </li>
+  <li class="nav-item" ng-class="{'active':vm.currentPath=='/banks'}">
+    <a class="nav-link text-bold active" aria-current="page" href="javascript:void(0)" ng-click="vm.navigate('banks')">Banks</a>
+  </li>
+</ul>
+<form class="form-inline my-2 my-lg-0 text-white" ng-if="vm.isLoggedIn">
+  <span class="font-weight-bold">
+    <span>{{ vm.user.name }}</span> 
+    &nbsp;
+    <span ng-if="vm.user.name">|</span>
+    &nbsp;
+  </span>
+  <a href="#" class="text-white font-weight-bold" ng-click="vm.doLogout()">Logout</a>
+</form>

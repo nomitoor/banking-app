@@ -1,0 +1,65 @@
+<section id="actionWrapper" class="row mt-3 mb-2">
+    <div class="col-12">
+      <button class="btn btn-success btn-success-dark float-right" ng-click="vm.addStock()">
+        <i class="material-icons">add_circle_outline</i>
+        Add Stock
+      </button>
+    </div>
+  </section>
+  <section class="d-flex overflow-x-scroll">
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="table-content">
+          <table class="table table-bordered table-centered table-stock">
+            <thead>
+              <tr>
+                <th class="text-left align-top" width="230">
+                  Stock Ticker
+                </th>
+                <th ng-repeat="stock in vm.stocks">
+                  <span ng-if="!stock.editing">
+                    {{ stock.code }}
+                  </span>
+                  <input ng-if="stock.editing" class="form-control d-inline" 
+                    ng-keypress="$event.keyCode==13?vm.saveStock(stock):void()" 
+                    ng-model="stock.code" auto-focus="true"
+                    style="width:70px">
+                  <button class="btn btn-sm btn-info btn-tiny d-inline" ng-if="!stock.editing" ng-click="stock.editing=true">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  
+                  <span ng-if="stock.editing">
+                    <button class="btn btn-sm btn-success btn-tiny d-inline" ng-click="vm.saveStock(stock)">
+                      <i class="material-icons">check</i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-tiny d-inline" ng-click="vm.deleteStock(stock)">
+                      <i class="material-icons">delete</i>
+                    </button>
+                  </span>
+
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="field in vm.fields" class="{{ field.rowColor }}">
+                <td class="text-left" colspan="{{field.heading?vm.stocks.length+1:1}}" ng-class="{'heading':field.heading}">
+                  {{ field.name }}
+                </td>
+                <td ng-repeat="stock in vm.stocks" 
+                    ng-if="!field.heading"
+                    ng-bind-html="stock[field.field]|stockformat:field|displayformat:field.format:stock[field.field]">
+                    
+                </td>
+                
+              </tr>
+              
+            </tbody>
+          </table>
+    
+        </div>
+        <div class="table-actions">
+          
+        </div>
+      </div>
+    </div>
+  </section>

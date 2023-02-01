@@ -1,0 +1,17 @@
+<section id="vBank" class="pt-4">
+  <div class="alert alert-warning" ng-if="!vm.banks.length">
+    There is not any bank yet.
+    Click <a href="javascript:void(0);" ng-click="vm.addBank()" class="btn btn-outline-success btn-sm">
+      <i class="material-icons">add</i>
+    </a> to create
+  </div>
+  <div ng-if="vm.banks.length" class="d-flex overflow-x-scroll justify-content-center">
+    <fm-bank class="mr-2" ng-repeat="bank in vm.banks track by $index" bank="bank" callback="vm.bankCallback"></fm-bank>
+    <div class="bank-controls">
+      <button class="btn btn-sm btn-success" ng-click="vm.addBank()">
+        <i class="material-icons">add</i> Add Bank
+      </button>
+    </div>
+  </div>
+</section>
+

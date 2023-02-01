@@ -1,0 +1,84 @@
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="table-content">
+      <table class="table table-bordered table-centered table-theme-dark">
+        <thead>
+          <tr>
+            <th class="text-left align-top bg-orange">
+              <span>
+                Gross Annual Income
+              </span>
+            </th>
+            <th class="align-top bg-orange" width="100">Year {{ vm.currentYear }}</th>
+            <th no-export class="align-middle bg-orange" width="75" ng-class="{'row-editing': vm.rowEditing}"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.items">
+            <td class="text-left position-relative">
+              <strong ng-if="!item.editing">
+                {{ item.name }}
+              </strong>
+              <div ng-if="item.editing" class="pl-3">
+                <div class="updown">
+                  <a href="javascript:void(0)" 
+                    class="btn btn-sm btn-tiny btn-info d-block"
+                    ng-click="vm.itemMoveUp(item)">
+                    <i class="material-icons">expand_less</i>
+                  </a>
+                  <a href="javascript:void(0)" 
+                    class="btn btn-sm btn-tiny btn-info d-block mt-1"
+                    ng-click="vm.itemMoveDown(item)">
+                    <i class="material-icons">expand_more</i>
+                  </a>
+                </div>
+                <input class="form-control" 
+                  ng-model="item.name" auto-focus="true"
+                  ng-class="{'border-danger': !item.name}">
+              </div>
+            </td>
+            <td>
+              <span ng-if="!item.editing" class="cell yearly">
+                {{ item.yearly | currency : '$' }}
+              </span>
+              <input type="number" ng-if="item.editing" 
+                class="form-control" ng-model="item.yearly" 
+                ng-keypress="$event.keyCode==13?vm.saveItem(item):void()"
+                ng-class="{'border-danger': item.yearly<=0||item.yearly==undefined }">
+
+            </td>
+            <td no-export>
+              <span ng-if="!item.ref_category">
+                <button class="btn btn-sm btn-info btn-tiny" ng-if="!item.editing" ng-click="item.editing=true;vm.rowEditing=true;">
+                  <i class="material-icons">edit</i>
+                </button>
+                <span ng-if="item.editing">
+                  <button class="btn btn-sm btn-tiny" ng-click="vm.setZero(item)" ng-class="{'btn-info': item.zero, 'btn-outline-info': !item.zero}">
+                    <i class="material-icons">exposure_zero</i>
+                  </button>
+                  <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveItem(item)">
+                    <i class="material-icons">check</i>
+                  </button>
+                  <button class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteItem(item)">
+                    <i class="material-icons">delete</i>
+                  </button>
+                </span>
+              </span> 
+            </td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>Total</strong></td>
+            <td><strong>{{ vm.total_yearly | currency : '$' }}</strong></td>
+            <td></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <div class="table-actions text-right">
+      <button class="btn btn-sm btn-success btn-success-dark" ng-click="vm.addItem()">
+        <i class="material-icons">add_circle_outline</i>
+        Row
+      </button>
+    </div>
+  </div>
+</div>

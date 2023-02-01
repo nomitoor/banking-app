@@ -1,0 +1,146 @@
+<!doctype html>
+<html ng-app="fm" ng-cloak>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+        <title>FINANCE MANAGER 2021</title>
+        <link rel="icon" href="img/logo.png" type="image/png" sizes="512x512">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="libs/bootstrap.min.css">
+        <link rel="stylesheet" href="libs/select.min.css">
+        <link rel="stylesheet" href="libs/ui-select.bootstrap4.shim.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="css/app.css" >
+    </head>    
+    <body ng-controller="MainController as vm" ng-click="vm.bodyClick()">
+      <div class="shine-slogan text-white py-1 px-3 d-flex">
+        <span class="d-none d-sm-block">
+          Shine's Budget Dividend & Retirement Calculator
+        </span>
+        <span class="ml-auto">{{ vm.currentTime | date:'MMM d, y' }}</span>
+        <span class="ml-2 rounded-lg bg-yellow text-dark px-1">{{ vm.currentTime | date:'hh:mm a' }}</span>
+        <span class="ml-2">{{ vm.timezone }}</span>
+      </div>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-theme-dark">
+        <a class="navbar-brand navbar-brand-shine text-white fs-2 mb-1" href="/">
+          <strong>Shine's BDR</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" ng-click="vm.openMenu=!vm.openMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="navbar-collapse" id="navbarSupportedContent" 
+          ng-class="{'collapse': !vm.openMenu}"
+          ng-include="'views/navbar/navbar-menu.html'">
+          
+        </div>
+      </nav>
+      
+      <div class="container-fluid">
+        <div class="container-wrapper">
+          <ng-view></ng-view>
+        </div>
+        <footer class="py-2 text-right">&copy; Shine's BDR.</footer>
+      </div>
+      <confirm-modal></confirm-modal>
+      <buy-stock></buy-stock>
+      <sell-stock></sell-stock>
+      <toast></toast>
+
+      <script type="text/javascript" src="libs/lodash.min.js"></script>
+      <script type="text/javascript" src="libs/print.min.js"></script>
+      <script type="text/javascript" src="libs/date.format.js"></script>
+      
+      <script type="text/javascript" src="libs/angular.min.js"></script>
+      <script type="text/javascript" src="libs/angular-route.min.js"></script>
+      <script type="text/javascript" src="libs/angular-sanitize.min.js"></script>
+      <script type="text/javascript" src="libs/highcharts.js"></script>
+      <script type="text/javascript" src="libs/highcharts-3d.js"></script>
+      <script type="text/javascript" src="libs/ui-bootstrap-tpls-2.5.0.min.js"></script>
+      <script type="text/javascript" src="libs/select.min.js"></script>
+      <script type="text/javascript" src="libs/moment.min.js"></script>
+      <script type="text/javascript" src="libs/moment-timezone.min.js"></script>
+      
+      <script type="text/javascript">
+        const ENV='development';
+      </script>
+      
+      <script type="text/javascript" src="js/app.js"></script>
+      <script type="text/javascript" src="js/stock/stock.filter.js"></script>
+      <script type="text/javascript" src="js/stock/display.filter.js"></script>
+
+      <script type="text/javascript" src="js/chart.service.js"></script>
+      <script type="text/javascript" src="js/api.service.js"></script>
+      <script type="text/javascript" src="js/common/permission.service.js"></script>
+      <script type="text/javascript" src="js/debt-api.service.js"></script>
+      <script type="text/javascript" src="js/notify.service.js"></script>
+      <script type="text/javascript" src="js/stock/stock.service.js"></script>
+      <script type="text/javascript" src="js/stock/yahoo.service.js"></script>
+      <script type="text/javascript" src="js/modal/confirm.service.js"></script>
+      <script type="text/javascript" src="js/notification/toast.service.js"></script>
+      <script type="text/javascript" src="js/stocks/databank.service.js"></script>
+      <script type="text/javascript" src="js/stocks/screener.service.js"></script>
+      <script type="text/javascript" src="js/stocks/watchlist.service.js"></script>
+      <script type="text/javascript" src="js/stocks/stocklist.service.js"></script>
+      <script type="text/javascript" src="js/stock/stockParser.service.js"></script>
+      <script type="text/javascript" src="js/dividend/dividend.service.js"></script>
+      <script type="text/javascript" src="js/common/anchor.service.js"></script>
+      <script type="text/javascript" src="js/common/broadcast.service.js"></script>
+      <script type="text/javascript" src="js/modal/buyStock.service.js"></script>
+      <script type="text/javascript" src="js/modal/sellStock.service.js"></script>
+      <script type="text/javascript" src="js/stocks/portfolio.service.js"></script>
+
+      <script type="text/javascript" src="js/budget.directive.js"></script>
+      <script type="text/javascript" src="js/debt.directive.js"></script>
+      <script type="text/javascript" src="js/category.directive.js"></script>
+      <script type="text/javascript" src="js/debtCategory.directive.js"></script>
+      <script type="text/javascript" src="js/autoFocus.directive.js"></script>
+      <script type="text/javascript" src="js/modal/confirm.directive.js"></script>
+      <script type="text/javascript" src="js/notification/toast.directive.js"></script>
+      <script type="text/javascript" src="js/common/yearSelector.directive.js"></script>
+      <script type="text/javascript" src="js/common/ddDatabank.directive.js"></script>
+      <script type="text/javascript" src="js/common/ddScreener.directive.js"></script>
+      <script type="text/javascript" src="js/common/paging.directive.js"></script>
+      <script type="text/javascript" src="js/common/ddStock.directive.js"></script>
+      <script type="text/javascript" src="js/common/csvDownload.directive.js"></script>
+      <script type="text/javascript" src="js/common/ddStocklist.directive.js"></script>
+      <script type="text/javascript" src="js/modal/stocklistModal.directive.js"></script>
+      <script type="text/javascript" src="js/modal/buyStock.directive.js"></script>
+      <script type="text/javascript" src="js/modal/sellStock.directive.js"></script>
+
+      <script type="text/javascript" src="js/common/ddPortfolio.directive.js"></script>
+      <script type="text/javascript" src="js/budget/annualIncome.directive.js"></script>
+      <script type="text/javascript" src="js/budget/netasset.directive.js"></script>
+      <script type="text/javascript" src="js/budget/liability.directive.js"></script>
+
+      <script type="text/javascript" src="js/main.controller.js"></script>
+      <script type="text/javascript" src="js/budget.controller.js"></script>
+      <script type="text/javascript" src="js/debt.controller.js"></script>
+      <script type="text/javascript" src="js/login.controller.js"></script>
+      <script type="text/javascript" src="js/register.controller.js"></script>
+      <script type="text/javascript" src="js/forgot.controller.js"></script>
+      <script type="text/javascript" src="js/activate.controller.js"></script>
+      <script type="text/javascript" src="js/reset.controller.js"></script>
+      <script type="text/javascript" src="js/stock/stock.controller.js"></script>
+      <script type="text/javascript" src="js/stock/intrinsic.controller.js"></script>
+      <script type="text/javascript" src="js/common/root.controller.js"></script>
+      <script type="text/javascript" src="js/portfolio/portfolio.controller.js"></script>
+      <!-- dividend -->
+      <script type="text/javascript" src="js/dividend/dividendCalculator.controller.js"></script>
+      <script type="text/javascript" src="js/dividend/dividendSummary.controller.js"></script>
+      <script type="text/javascript" src="js/dividend/dividendCalculatorAdd.controller.js"></script>
+      <!-- stocks -->
+      <script type="text/javascript" src="js/stocks/databank.controller.js"></script>
+      <script type="text/javascript" src="js/stocks/screener.controller.js"></script>
+      <script type="text/javascript" src="js/stocks/watchlist.controller.js"></script>
+
+      <!-- bank -->
+      <script type="text/javascript" src="js/bank/bank.service.js"></script>
+      <script type="text/javascript" src="js/bank/bank.controller.js"></script>
+      <script type="text/javascript" src="js/bank/bank.directive.js"></script>
+      <script type="text/javascript" src="js/bank/bankExpenseCategory.directive.js"></script>
+
+    </body>
+</html>

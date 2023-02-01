@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row mt-5">
+      <div class="col-md-5 offset-md-4 col-12">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Activate your account
+          </div>
+          <div class="card-body">
+            <div ng-if="vm.activateStatus==0">
+                Activating... please wait!
+            </div>
+            <div ng-if="vm.activateStatus==1">
+                <div class="alert alert-success">
+                    Your account has been activated. You will be redirect to login page after 5s
+                </div>
+            </div>
+            <div ng-if="vm.activateStatus==2">
+                <div class="alert alert-danger">
+                    Activate failed. This could happen if your token is expired. Please email me (shayinm@gmail.com) for more detail.
+                </div>
+            </div>
+            
+          </div>
+      </div>
+    </div>
+  </div>
+  

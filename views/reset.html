@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row mt-5">
+      <div class="col-md-5 offset-md-4 col-12">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Reset your password
+          </div>
+          <div class="card-body">
+            <form name="vm.resetForm" ng-submit="vm.reset(vm.user)" ng-if="vm.resetStatus==0">
+              <div class="alert alert-warning">Please input your new password</div>
+              <div class="mb-3">
+                <label for="ePass1" class="form-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="ePass1" required ng-model="vm.user.new_password">
+              </div>
+              <div class="mb-3">
+                <label for="ePass2" class="form-label">Retype Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="ePass2" required ng-model="vm.user.retype_password">
+              </div>
+              <p class="text-danger" ng-if="vm.errorText!=''"> {{ vm.errorText }}</p>
+              <div class="clearfix">
+                <a class="btn-link float-left mt-2" href="#!/login">Return to login</a>
+                <button type="submit" class="btn btn-success btn-success-dark float-right" 
+                  ng-disabled="!vm.resetForm.$valid || vm.user.new_password!=vm.user.retype_password">
+                  Update Password
+                </button>
+              </div>
+            </form>
+            <div ng-if="vm.resetStatus==1">
+              <div class="alert alert-success">
+                Your password has been update successful! You will be redirected to login page after 5s!
+              </div>
+              <div class="text-center">
+                <a class="btn btn-success btn-success-dark mt-2" href="#!/login">Login now</a>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  

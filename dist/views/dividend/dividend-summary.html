@@ -1,0 +1,219 @@
+<section class="overflow-x-scroll mt-2" style="min-height: calc(100vh - 150px)">
+  <div class="d-flex mt-1 mb-2">
+    <dd-portfolio dd-model="vm.currentPortfolio" dd-change="vm.onChangePortfolio" option="vm.portfolioOption"></dd-portfolio>
+  </div>
+  <div ng-if="!vm.stocks.length" class="alert alert-warning">You don't have any stock in this portfolio. Select another porfolio or back to dividend calculator and Click (+) Add Stock to add one.!</div>
+  <div ng-if="vm.stocks.length" class="row mb-3">
+    <div class="my-2 d-flex">
+      <div class="col-auto py-1 px-4 bg-warning">Portfolio Average Yield</div>
+      <div class="col-auto py-1 bg-success text-white">{{ vm.averageYield | stockformat:{} }}</div>
+      
+      <div class="col-auto py-1 ml-4 px-2">Portfolio Cash</div>
+      <div class="col-auto py-1 text-success">{{ vm.portfolio.balance | currency:'$' }}</div>
+
+      <div class="col-auto py-1 ml-4 px-2">Investment</div>
+      <div class="col-auto py-1 text-success">{{ vm.portfolioInvestment | currency:'$' }}</div>
+    </div>
+    <div class="col-12">
+      <div class="table-responsive">
+        <table class="mw-1500 table table-bordered table-centered table-summary nowrap" ng-if="vm.stocks.length">
+          <thead>
+            <tr>
+              <th ng-repeat="field in vm.fields" class="bg-primary text-white">
+                {{ field.name }}
+              </th>
+              <th class="bg-primary text-white">
+                % of Portfolio
+              </th>
+              <th class="bg-primary text-white"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="stock in vm.stocks">
+              <td ng-repeat="field in vm.fields">
+                <span ng-bind-html="stock[field.field]|stockformat:field|displayformat:field.format:stock[field.field]"></span>
+              </td>
+              <td>{{ stock.percentageProfilio }}%</td>
+              <td>
+                <button class="btn-danger btn btn-sm btn-tiny" ng-click="vm.sellStock(stock)">
+                  <i class="material-icons">local_atm</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="d-flex mb-2">
+        <label class="form-label pt-2 pr-3">Year</label> 
+        <year-selector style="min-width: 100px;" ng-model="vm.currentYear" ng-change="vm.onChangeYear"></year-selector>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered mw-1500 table-centered nowrap">
+          <thead>
+            <tr>
+              <th rowspan="2" class="align-middle bg-yellow">Symbol</th>
+              <th colspan="2" ng-repeat="m in vm.months" class="align-middle bg-primary text-white">{{ m }}</th>
+              <th colspan="2" class="bg-yellow align-middle">Annual Income</th>
+            </tr>
+            <tr>
+              <td ng-repeat-start="m in vm.months" class="bg-success text-white">
+                W/O Drip
+              </td>
+              <td ng-repeat-end class="bg-theme-dark text-white">
+                With Drip
+              </td>
+              <td class="bg-success text-white">
+                W/O Drip
+              </td>
+              <td class="bg-theme-dark text-white">
+                With Drip
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="stock in vm.stocks">
+              <td>{{ stock.code }}</td>
+              <td ng-repeat-start="m in vm.months" class="text-success">
+                {{ vm.stockDividends[stock.code][(((vm.currentYear-1)*12)+$index-stock.tickMargin)/(12/stock.tick)].dividendCash|currency:'$' }}
+              </td>
+              <td ng-repeat-end class="text-purple">
+                {{ vm.stockDividends[stock.code][(((vm.currentYear-1)*12)+$index-stock.tickMargin)/(12/stock.tick)].dividendCashDrip|currency:'$' }}
+              </td>
+              <th class="text-success">
+                {{ vm.stockDividends[stock.code][((vm.currentYear-1)*stock.tick+(stock.tick-1))].yearEarning|currency:'$' }}
+              </th>
+              <th class="text-purple">
+                {{ vm.stockDividends[stock.code][((vm.currentYear-1)*stock.tick+(stock.tick-1))].yearEarningDrip|currency:'$' }}
+              </th>
+            </tr>
+            <tr>
+              <td colspan="27" class="pt-1 pb-0 bg-primary"></td>
+            </tr>
+            <tr>
+              <th class="bg-yellow">Monthly Income</th>
+              <th ng-repeat-start="m in vm.months" class="align-middle text-success">
+                {{ vm.monthlyReceived[$index][0]|currency:'$' }} 
+              </th>
+              <th ng-repeat-end class="align-middle text-purple">
+                {{ vm.monthlyReceived[$index][1]|currency:'$' }}
+              </th>
+              <th class="bg-warning text-success align-middle text-white">
+                {{ vm.yearlyReceived[0]|currency:'$' }}
+              </th>
+              <th class="bg-warning text-purple align-middle">
+                {{ vm.yearlyReceived[1]|currency:'$' }}
+              </th>
+            </tr>
+          </tbody>
+        
+        </table>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="d-flex table-responsive">
+        <table ng-repeat="stock in vm.stocks" class="table table-bordered table-centered nowrap mr-3" width="300">
+          <thead>
+            <tr>
+              <th colspan="4" class="align-middle bg-primary text-white">{{ stock.code }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="2">
+                Dividend Yield
+              </td>
+              <td colspan="2">
+                {{ stock.dividendYield|stockformat:{'unit':'%'} }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                Dividend Per Share
+              </td>
+              <td colspan="2">
+                <div class="bg-success text-white">
+                  {{ stock.dividendsPerShare }}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="bg-primary text-white">Year</td>
+              <td class="bg-success text-white">W/O Drip</td>
+              <td class="bg-theme-dark text-white">With Drip</td>
+              <td class="bg-primary text-white">Drip Share</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Yearly/Monthly</td>
+              <td>Yearly/Monthly</td>
+              <td></td>
+            </tr>
+            <tr ng-repeat="y in vm.fiveYears track by $index">
+              <td>{{ y }}</td>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCash|currency:'$' }} / {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCash/12|currency:'$' }}
+                </span>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCashDrip|currency:'$' }} / {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCashDrip/12|currency:'$' }}
+                </span>
+              </td>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dripShareInYear }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-12 mt-2">
+      <div class="d-flex table-responsive">
+        <table ng-repeat="stock in vm.stocks" class="table table-bordered table-centered nowrap mr-3" width="300">
+          <thead>
+            <tr>
+              <th colspan="4" class="align-middle bg-primary text-white">{{ stock.code }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="bg-primary text-white">Year</td>
+              <td class="bg-success text-white">W/O Drip</td>
+              <td class="bg-theme-dark text-white">With Drip</td>
+              <td class="bg-primary text-white">Drip Share</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Yearly/Monthly</td>
+              <td>Yearly/Monthly</td>
+              <td></td>
+            </tr>
+            <tr ng-repeat="y in vm.eachYears track by $index">
+              <td>{{ y }}</td>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCash|currency:'$' }} / {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCash/12|currency:'$' }}
+                </span>
+              </td>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCashDrip|currency:'$' }} / {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dividendCashDrip/12|currency:'$' }}
+                </span>
+              </td>
+              <td>
+                <span ng-if="y<=stock.year">
+                  {{ vm.stockDividends[stock.code][(y*stock.tick)-2].dripShareInYear }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</section>

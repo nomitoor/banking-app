@@ -1,0 +1,80 @@
+<section id="actionWrapper" class="mt-3 mb-2">
+  <div class="row">
+    <div class="col-auto mb-2 d-flex">
+      <dd-portfolio
+        dd-model="vm.myPortfolio"
+        dd-sub-model="portfolio"
+        dd-change="vm.onChangePortfolio"
+        option="vm.portfolioOption">
+      </dd-portfolio>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-md-5 col-lg-4">
+      <div class="card w-100 border-success">
+        <div class="card-header text-center">
+          Portfolio Balance
+        </div>
+        <div class="card-body">
+          <h3 class="card-title text-center text-success">
+            {{ vm.currentPortfolio.balance | currency:'$' }}
+          </h3>
+          <p class="card-text text-right mt-3">
+            <a href="javascript:;" class="btn btn-outline-success" ng-click="vm.showAddBalance()">
+              <i class="material-icons">attach_money</i>
+              Add
+            </a>
+            <a href="javascript:;" class="btn btn-outline-danger ml-1" ng-click="vm.showWithdrawBalance()">
+              <i class="material-icons">money_off</i>
+              Withdraw
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal d-block" ng-if="vm.showModal">
+    <div class="modal-dialog" ng-init="amount=''">
+      <div class="modal-content">
+        <form ng-submit="vm.updateBalance(amount)">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <span ng-if="vm.modalType==='add'">Add Balance</span>
+              <span ng-if="vm.modalType!=='add'">Withdraw</span>
+            </h5>
+            <button type="button" class="close" ng-click="vm.showModal=false">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Amount</label>
+              <div class="col-sm-9">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <input type="number" step="0.01" class="form-control" ng-model="amount" auto-focus="true">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" ng-click="vm.showModal=false">Close</button>
+            <button ng-if="vm.modalType==='add'" type="submit" class="btn btn-success">
+              <i class="material-icons">attach_money</i>
+              <span>Add</span>
+            </button>  
+            <button ng-if="vm.modalType!=='add'" type="submit" class="btn btn-danger">
+              <i class="material-icons">money_off</i>
+              <span>Withdraw</span>
+            </button>  
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" ng-if="vm.showModal"></div>
+</section>

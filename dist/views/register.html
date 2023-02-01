@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="row mt-5">
+      <div class="col-md-6 offset-md-3 col-12">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Register
+          </div>
+          <div class="card-body" ng-init="user={gender:1}">
+            <div ng-if="vm.registerSuccess" class="alert alert-success">
+              Register success! An email has been sent. Please check your mailbox and activate your account.
+            </div>
+
+
+            <form ng-if="!vm.registerSuccess" ng-submit="!vm.isWaiting && vm.register(user)">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="txtUsername" class="form-label">Username <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="txtUsername" required ng-model="user.username">
+                </div>
+                <div class="col-md-6">
+                  <label for="txtPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                  <input type="password" class="form-control" id="txtPassword" required ng-model="user.password">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="txtFirstname" class="form-label">First name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="txtFirstname" required ng-model="user.first_name">
+                </div>
+                <div class="col-md-6">
+                  <label for="txtLastname" class="form-label">Last name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="txtLastname" required ng-model="user.last_name">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="txtEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" id="txtEmail" required ng-model="user.email">
+                </div>
+                <div class="col-md-6">
+                  <label for="txtGender" class="form-label">Gender <span class="text-danger">*</span></label>
+                  <select class="form-select form-control" ng-model="user.gender" required ng-options="gender.value as gender.label for gender in vm.GENDERS">
+                  </select>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="txtCity" class="form-label">City <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="txtCity" required ng-model="user.city">
+                </div>
+                <div class="col-md-6">
+                  <label for="txtCountry" class="form-label">Country <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="txtCountry" required ng-model="user.country">
+                </div>
+              </div>
+              <div ng-if="vm.isWaiting">Waiting...</div>
+              
+              <div ng-if="vm.registerError" class="alert alert-warning">{{ vm.errorText }}</div>
+              <a class="btn-link float-left mt-2" href="#!/login">You have account already?</a>
+              <button type="submit" class="btn btn-success btn-success-dark float-right" ng-disabled="vm.isWaiting">
+                <i class="material-icons">app_registration</i>
+                Register
+              </button>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+  

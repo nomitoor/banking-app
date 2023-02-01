@@ -1,0 +1,127 @@
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="table-content">
+      <table class="table table-bordered table-centered table-theme-dark">
+        <thead>
+          <tr>
+            <th class="text-left align-top">
+              <span ng-if="!vm.category.editing">
+                {{ vm.category.name }}
+              </span>
+              <input ng-if="vm.category.editing" class="form-control" ng-keypress="$event.keyCode==13?vm.saveCategory(vm.category):void()" ng-model="vm.category.name" auto-focus="true">
+            </th>
+            <th class="align-top" width="90">Weekly</th>
+            <th class="align-top" width="100">Bi-Weekly</th>
+            <th class="align-top" width="100">Monthly</th>
+            <th class="align-top" width="100">Yearly</th>
+            <th no-export class="align-middle" width="75" ng-class="{'row-editing': vm.rowEditing}">
+              <button class="btn btn-sm btn-info btn-tiny" ng-if="!vm.category.editing && vm.category.c_type!=2" ng-click="vm.category.editing=true;">
+                <i class="material-icons">edit</i>
+              </button>
+              <span ng-if="vm.category.editing">
+                <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveCategory(vm.category)">
+                  <i class="material-icons">check</i>
+                </button>
+                <button ng-if="!vm.category.persistent" class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteCategory(vm.category)">
+                  <i class="material-icons">delete</i>
+                </button>
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.category.items">
+            <td class="text-left position-relative">
+              <strong ng-if="!item.editing">
+                {{ item.name }}
+                <span ng-if="item.percentage">- {{ item.percentage }}%</span>
+              </strong>
+              <div ng-if="item.editing" class="pl-3">
+                <div class="updown">
+                  <a href="javascript:void(0)" 
+                    class="btn btn-sm btn-tiny btn-info d-block"
+                    ng-click="vm.itemMoveUp(item)">
+                    <i class="material-icons">expand_less</i>
+                  </a>
+                  <a href="javascript:void(0)" 
+                    class="btn btn-sm btn-tiny btn-info d-block mt-1"
+                    ng-click="vm.itemMoveDown(item)">
+                    <i class="material-icons">expand_more</i>
+                  </a>
+                </div>
+                <input class="form-control" 
+                  ng-model="item.name" auto-focus="true"
+                  ng-class="{'border-danger': !item.name}">
+              </div>
+            </td>
+            <td>
+              <span class="cell weekly">
+                {{ item.weekly | currency : '$' }}
+              </span>
+            </td>
+            <td>
+              <span class="cell biweekly">
+                {{ item.bi_weekly | currency : '$'  }}
+              </span>
+            </td>
+            <td>
+              <span ng-if="!item.editing">
+                <span class="cell monthly">
+                {{ item.monthly | currency : '$' }}
+                </span>
+              </span>
+              <input type="number" ng-if="item.editing" 
+                class="form-control" ng-model="item.monthly" 
+                ng-keypress="$event.keyCode==13?vm.saveItem(item):void()" 
+                ng-change="vm.calculateNet(item)"
+                ng-class="{'border-danger': item.monthly<=0||item.monthly==undefined }">
+            </td>
+            <td>
+              <span class="cell yearly">
+                {{ item.yearly | currency : '$' }}
+              </span>
+            </td>
+            <td no-export>
+              <span ng-if="!item.ref_category">
+                <button class="btn btn-sm btn-info btn-tiny" ng-if="!item.editing" ng-click="item.editing=true;vm.rowEditing=true;">
+                  <i class="material-icons">edit</i>
+                </button>
+                <span ng-if="item.editing">
+                  <button class="btn btn-sm btn-tiny" ng-click="vm.setZero(item)" ng-class="{'btn-info': item.zero, 'btn-outline-info': !item.zero}">
+                    <i class="material-icons">exposure_zero</i>
+                  </button>
+                  <button class="btn btn-sm btn-success btn-tiny" ng-click="vm.saveItem(item)">
+                    <i class="material-icons">check</i>
+                  </button>
+                  <button class="btn btn-sm btn-danger btn-tiny" ng-click="vm.deleteItem(item)">
+                    <i class="material-icons">delete</i>
+                  </button>
+                </span>
+              </span> 
+            </td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>Total</strong></td>
+            <td><strong>{{ vm.category.total_weekly | currency : '$'}}</strong></td>
+            <td><strong>{{ vm.category.total_bi_weekly | currency : '$' }}</strong></td>
+            <td><strong>{{ vm.category.total_monthly | currency : '$' }}</strong></td>
+            <td><strong>{{ vm.category.total_yearly | currency : '$' }}</strong></td>
+            <td></td>
+          </tr>          
+        </tbody>
+      </table>
+    </div>
+    <div class="table-actions text-right">
+      <button class="btn btn-sm btn-success btn-success-dark mr-2" 
+        ng-click="vm.addCategory(vm.category)"
+        ng-if="vm.category.c_type===3">
+        <i class="material-icons">add_circle_outline</i>
+        Category
+      </button>
+      <button class="btn btn-sm btn-success btn-success-dark" ng-click="vm.addItem()">
+        <i class="material-icons">add_circle_outline</i>
+        Row
+      </button>
+    </div>
+  </div>
+</div>
